@@ -1,0 +1,157 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zenobid - AI-Powered B2B Trade Marketplace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+  <!-- Navbar -->
+  <nav class="bg-blue-600 text-white p-4 fixed w-full top-0 z-10 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Zenobid</h1>
+      <ul class="flex space-x-6">
+        <li><a href="#home" class="hover:underline">Home</a></li>
+        <li><a href="#about" class="hover:underline">About</a></li>
+        <li><a href="#problem" class="hover:underline">Problem</a></li>
+        <li><a href="#solution" class="hover:underline">Solution</a></li>
+        <li><a href="#team" class="hover:underline">Team</a></li>
+        <li><a href="#contact" class="hover:underline">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white pt-16">
+    <div class="container mx-auto text-center">
+      <h2 class="text-5xl font-bold mb-4">Zenobid: Empowering Global Trade</h2>
+      <p class="text-xl mb-6">Connecting Indian manufacturers with global buyers through an AI-powered B2B marketplace.</p>
+      <a href="#contact" class="bg-white text-blue-600 px-6 py-3 rounded-full font-semibold hover:bg-gray-200">Get in Touch</a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 bg-white">
+    <div class="container mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-6">About Zenobid</h3>
+      <p class="text-lg max-w-2xl mx-auto">
+        Zenobid is an AI-driven platform revolutionizing cross-border B2B trade. We empower Indian manufacturers in textiles, dairy, and more to reach global buyers in the UAE, Africa, and beyond, with a $15B market opportunity in India-MENAP trade.
+      </p>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section id="problem" class="py-16 bg-gray-100">
+    <div class="container mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-6">The Problem</h3>
+      <p class="text-lg max-w-2xl mx-auto">
+        Indian manufacturers face challenges accessing global markets due to fragmented supply chains, lack of trust, and inefficient pricing. Buyers in UAE and Africa struggle to source reliable, cost-effective suppliers.
+      </p>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section id="solution" class="py-16 bg-white">
+    <div class="container mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-6">Our Solution</h3>
+      <p class="text-lg max-w-2xl mx-auto">
+        Zenobid’s AI-powered bidding platform streamlines supplier-buyer connections, offering real-time pricing, verified suppliers, and seamless trade logistics. We reduce costs and build trust for cross-border transactions.
+      </p>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section id="team" class="py-16 bg-gray-100">
+    <div class="container mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-6">Our Team</h3>
+      <div class="flex flex-wrap justify-center gap-8">
+        <div class="w-64">
+          <img src="https://via.placeholder.com/150" alt="Team Member" class="rounded-full mx-auto mb-4">
+          <h4 class="text-xl font-semibold">[Your Name]</h4>
+          <p class="text-gray-600">Founder & CEO</p>
+          <p class="text-sm">[Brief bio: e.g., Experienced in B2B trade, passionate about AI innovation]</p>
+        </div>
+        <!-- Add more team members as needed -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 bg-white">
+    <div class="container mx-auto text-center">
+      <h3 class="text-3xl font-bold mb-6">Contact Us</h3>
+      <p class="text-lg max-w-2xl mx-auto mb-8">
+        Interested in partnering with Zenobid or learning more? Reach out to us!
+      </p>
+      <form class="max-w-lg mx-auto" onsubmit="handleSubmit(event)">
+        <div class="mb-4">
+          <input type="text" id="name" placeholder="Your Name" class="w-full p-3 border rounded-lg" required>
+        </div>
+        <div class="mb-4">
+          <input type="email" id="email" placeholder="Your Email" class="w-full p-3 border rounded-lg" required>
+        </div>
+        <div class="mb-4">
+          <textarea id="message" placeholder="Your Message" class="w-full p-3 border rounded-lg" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-blue-600 text-white p-4">
+    <div class="container mx-auto text-center">
+      <p>&copy; 2025 Zenobid. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    function handleSubmit(event) {
+      event.preventDefault();
+      alert("Form submitted! Note: This is a demo; add a backend to process submissions.");
+      document.querySelector("form").reset();
+    }
+  </script>
+</body>
+</html>
